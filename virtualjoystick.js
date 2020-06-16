@@ -218,19 +218,30 @@ VirtualJoystick.prototype._onMove	= function(x, y)
 
 VirtualJoystick.prototype._onMouseUp	= function(event)
 {
+	this._mouseStart = false;
+	this.dispatchEvent('mouseEnd', event);
 	return this._onUp();
 }
 
 VirtualJoystick.prototype._onMouseDown	= function(event)
 {
+	this._mouseStart = true;
+
+	// notify event for validation
+	var isValid	= this.dispatchEvent('mouseStartValidation', event);
+	if( isValid === false )	return;
+	
+	this.dispatchEvent('mouseStart', event);
+
 	event.preventDefault();
 	var x	= event.clientX;
 	var y	= event.clientY;
-	return this._onDown(x, y);
+	return this._onDown(x, y)
 }
 
 VirtualJoystick.prototype._onMouseMove	= function(event)
 {
+	this.dispatchEvent('mouseMove', event);
 	var x	= event.clientX;
 	var y	= event.clientY;
 	return this._onMove(x, y);
